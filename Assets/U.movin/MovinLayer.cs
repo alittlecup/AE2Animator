@@ -1,14 +1,16 @@
 ﻿
+using UnityEditor.iOS;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace u.movin
 {
     public class MovinLayer
     {
         public GameObject gameObject;
-        public Transform transform
+        public RectTransform transform
         {
-            get { return gameObject.transform; }
+            get { return gameObject.GetComponent<RectTransform>(); }
         }
 
         public Vector3 positionOffset = Vector3.zero;
@@ -46,12 +48,22 @@ namespace u.movin
             this.content = layer;
             this.sort = sort;
 
-            gameObject = new GameObject(content.ind + "  " + content.nm);
-            transform.SetParent(movin.container.transform, false);
-
+            // gameObject = new GameObject(content.ind + "  " + content.nm);
+            // transform.SetParent(movin.container.transform, false);
+            gameObject = GameObject.Instantiate(Resources.Load<GameObject>("Image"),movin.container.transform,false);
+            gameObject.name = content.ind + "  " + content.nm;
+            gameObject.AddComponent<CanvasRenderer>();
             positionOffset = content.positionOffset;
-            
-            transform.localPosition = content.position + positionOffset;
+            if (layer.width != 0)
+            {
+                transform.anchorMin = new Vector2(0, 1);
+                transform.anchorMax = new Vector2(0, 1);
+                transform.sizeDelta = new Vector2(layer.width,layer.height);
+                var image = gameObject.AddComponent<Image>();
+                image.sprite = Resources.Load<Sprite>("json/"+layer.imgPath);
+            }
+
+            transform.anchoredPosition = content.position + positionOffset;
             transform.localRotation = content.rotation;
             transform.localScale = content.scale;
 

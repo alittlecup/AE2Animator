@@ -82,6 +82,13 @@ namespace u.movin
                         JSONNode a = n["assets"][c];
 
                         if (a["id"] == layer.refId){
+                            if (a["w"] != null)
+                            {
+                                b.layers[j].width = a["w"];
+                                b.layers[j].height = a["h"];
+                                b.layers[j].imgPath = (a["u"]+""+a["p"]).Split('.')[0];
+
+                            }
                             for (int z = 0; z < a["layers"].Count; z++) {
                                 JSONNode e = a["layers"][z];
                                 j++;
@@ -89,6 +96,7 @@ namespace u.movin
                                 BodymovinLayer i = ParseLayer(e);
                                 i.id = a["id"];
                                 i.ind += b.layers.Length + j;
+
                                 highestIndex = i.ind > highestIndex ? i.ind : highestIndex;
                                 i.startTime = layer.startTime;
                                 
@@ -593,6 +601,9 @@ namespace u.movin
         public string id;
         public string refId;
         public float startTime;
+        public int width;
+        public int height;
+        public string imgPath;
 
         public string nm;
         public BodymovinShape[] shapes;

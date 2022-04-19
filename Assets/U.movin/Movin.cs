@@ -2,6 +2,7 @@
 using UnityEngine;
 using u.movin;
 using Unity.VectorGraphics;
+using UnityEngine.Experimental.AI;
 
 namespace u.movin
 {
@@ -27,8 +28,8 @@ public class Movin
 {
     public GameObject gameObject;
     public GameObject container;
-    public Transform transform {
-        get { return gameObject.transform; }
+    public RectTransform transform {
+        get { return gameObject.GetComponent<RectTransform>(); }
     }
 
     public BodymovinContent content;
@@ -69,9 +70,13 @@ public class Movin
     public Movin(Transform parent, string path, int sort = 0, float scale = 1f, float strokeWidth = 0.5f, bool loop = true, float quality = 0.4f)
     {
         gameObject = new GameObject();
+        gameObject.AddComponent<RectTransform>();
         transform.SetParent(parent, false);
-
+        MaxContainer(gameObject.GetComponent<RectTransform>());
         container = new GameObject();
+        container.AddComponent<RectTransform>();
+        MaxContainer(container.GetComponent<RectTransform>());
+
         container.transform.SetParent(transform, false);
 
         MovinInit(path, sort, scale, strokeWidth, loop, quality);
@@ -79,14 +84,24 @@ public class Movin
 
         /* ----- GET FRAME UPDATES ----- */
 
-        updater = gameObject.AddComponent<Updater>();
-        updater.fired += Update;
+        // updater = gameObject.AddComponent<Updater>();
+        // updater.fired += Update;
+    }
+
+    private void MaxContainer(RectTransform rectTransform)
+    {
+        rectTransform.gameObject.AddComponent<CanvasRenderer>();
+        rectTransform.anchorMax = new Vector2(1, 1);
+        rectTransform.anchorMin = new Vector2(0, 0);
+        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        rectTransform.offsetMin = new Vector2(0, 0);
+        rectTransform.offsetMax = new Vector2(0, 0);
+
     }
 
 
     private void MovinInit(string path, int sort = 0, float scale = 1f, float strokeWidth = 0.5f, bool loop = true, float quality = 0.4f){
-        
-        scale *= 0.1f;  // Reduce default scale
+
 
         gameObject.name = "body - " + path;
         container.name = "container - " + path;
@@ -102,9 +117,7 @@ public class Movin
             Debug.Log(">>>>  NO CONTENT LAYERS, ABORT!  <<<<"); 
             return;  
         }
-        
-        container.transform.localScale = Vector3.one * this.scale;
-        container.transform.localPosition -= new Vector3(content.w / 2, -(content.h / 2), 0) * scale;
+
 
         frameRate = content.fr;
         totalFrames = content.op;
