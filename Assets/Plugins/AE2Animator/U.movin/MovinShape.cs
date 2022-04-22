@@ -84,6 +84,7 @@ namespace u.movin
 
             /* GAMEOBJECT, MESH, MATERIAL */
             gameObject = new GameObject(layer.content.GetShapeName(content));
+            gameObject.AddComponent<RectTransform>();
             transform.SetParent(parent, false);
             transform.localPosition = -layer.content.anchorPoint;
 
