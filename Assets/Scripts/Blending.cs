@@ -9,8 +9,8 @@ public class Blending : MonoBehaviour {
 
     void Start () {
 
-        s = new Movin(transform, "json/data", quality: 0.1f);
-        // s.Play();
+        s = new Movin(transform, "json/circle", quality: 0.1f);
+        s.Play();
 
     }
 
